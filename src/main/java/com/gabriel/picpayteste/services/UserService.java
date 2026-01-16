@@ -2,10 +2,12 @@ package com.gabriel.picpayteste.services;
 
 import com.gabriel.picpayteste.domain.user.User;
 import com.gabriel.picpayteste.domain.user.UserType;
+import com.gabriel.picpayteste.dtos.UserDTO;
 import com.gabriel.picpayteste.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -31,5 +33,15 @@ public class UserService {
 
     public void saveUSer(User user){
         this.repository.save(user);
+    }
+
+    public User createUser(UserDTO user) {
+        User newUser = new User(user);
+        this.saveUSer(newUser);
+        return newUser;
+    }
+
+    public List<User> getAllUsers() {
+        return this.repository.findAll();
     }
 }
