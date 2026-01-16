@@ -17,18 +17,20 @@ import java.util.Map;
 public class TransactionService {
 
     private UserService userService;
+    private NotificationService notificationService;
 
     private TransactionRepository transactionRepository;
 
     private RestTemplate restTemplate;
 
-    public TransactionService(UserService userService, TransactionRepository transactionRepository, RestTemplate restTemplate) {
+    public TransactionService(UserService userService, NotificationService notificationService, TransactionRepository transactionRepository, RestTemplate restTemplate) {
         this.userService = userService;
+        this.notificationService = notificationService;
         this.transactionRepository = transactionRepository;
         this.restTemplate = restTemplate;
     }
 
-    public void createTransaction(TransactionDTO transaction) throws Exception {
+    public Transaction createTransaction(TransactionDTO transaction) throws Exception {
         User sender = this.userService.findUserById(transaction.senderId());
         User receiver = this.userService.findUserById(transaction.receiverId());
 
@@ -51,6 +53,10 @@ public class TransactionService {
         this.transactionRepository.save(newTransaction);
         this.userService.saveUSer(sender);
         this.userService.saveUSer(receiver);
+        this.notificationService.sendNotification(sender, "Transação realizada");
+        this.notificationService.sendNotification(receiver, "Transação realizada");
+
+        return newTransaction;
     }
 
     public boolean authorizeTransaction(User user, BigDecimal value){
